@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const supabase = useSupabaseClient();
 
 const loading = ref(false);
@@ -9,14 +9,13 @@ const handleLogin = async () => {
   try {
     loading.value = true;
     const { error } = await supabase.auth.signInWithOtp({
-      email: email.value,
-      options: {
-        emailRedirectTo: window.location.href,
-      },
+      email: email.value
     });
-    if (error) throw error;
-  } catch (error) {
-    loginError.value = error.error_description || error?.message;
+    if (error) {
+      loginError.value = error.message;
+    }
+  } catch (error: any) {
+    loginError.value = error?.message;
   } finally {
     loading.value = false;
   }
@@ -57,7 +56,7 @@ const handleLogin = async () => {
               name="email"
               type="email"
               autocomplete="email"
-              required=""
+              required="true"
               v-model="email"
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
