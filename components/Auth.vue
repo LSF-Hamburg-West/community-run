@@ -8,7 +8,12 @@ const loginError = ref("");
 const handleLogin = async () => {
   try {
     loading.value = true;
-    const { error } = await supabase.auth.signInWithOtp({ email: email.value });
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.value,
+      options: {
+        emailRedirectTo: window.location.href,
+      },
+    });
     if (error) throw error;
   } catch (error) {
     loginError.value = error.error_description || error?.message;

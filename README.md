@@ -18,6 +18,12 @@ Start the development server on `http://localhost:3000`:
 bun run dev
 ```
 
+Start the supabase server:
+
+```bash
+supabase start
+```
+
 ## Production
 
 Build the application for production:
