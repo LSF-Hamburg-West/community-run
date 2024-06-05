@@ -2,14 +2,19 @@
 const supabase = useSupabaseClient();
 
 const loading = ref(false);
-const email = ref("");
+const email = defineModel<string>();
 const loginError = ref("");
 
 const handleLogin = async () => {
+  if (!email?.value) {
+    loginError.value = "Bitte gib deine E-Mail Adresse ein.";
+    return;
+  }
+  console.log("email", email?.value);
   try {
     loading.value = true;
     const { error } = await supabase.auth.signInWithOtp({
-      email: email.value,
+      email: email?.value,
       options: { emailRedirectTo: useRuntimeConfig().public.baseUrl },
 
     });
@@ -32,7 +37,7 @@ const handleLogin = async () => {
       <img
         class="mx-auto h-10 w-auto"
         src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-        alt="Your Company"
+        alt="LSF Hamburg West Logo"
       />
       <h2
         class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
