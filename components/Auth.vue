@@ -9,7 +9,9 @@ const handleLogin = async () => {
   try {
     loading.value = true;
     const { error } = await supabase.auth.signInWithOtp({
-      email: email.value
+      email: email.value,
+      options: { emailRedirectTo: useRuntimeConfig().public.baseUrl },
+
     });
     if (error) {
       loginError.value = error.message;
