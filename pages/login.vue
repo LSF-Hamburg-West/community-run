@@ -10,12 +10,11 @@ const handleLogin = async () => {
     loginError.value = "Bitte gib deine E-Mail Adresse ein.";
     return;
   }
-  console.log("email", email?.value);
   try {
     loading.value = true;
     const { error } = await supabase.auth.signInWithOtp({
       email: email?.value,
-      options: { emailRedirectTo: useRuntimeConfig().public.baseUrl },
+      options: { emailRedirectTo: `${useRuntimeConfig().public.baseUrl}/confirm` },
 
     });
     if (error) {
