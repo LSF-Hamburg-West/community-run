@@ -8,13 +8,15 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      baseUrl: process.env.NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL || "http://localhost:3000",
-    }
+      baseUrl:
+        `https://${process.env.NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL}` ||
+        "http://localhost:3000",
+    },
   },
   supabase: {
     redirectOptions: {
-      login: '/login',
-      callback: '/confirm',
+      login: "/login",
+      callback: "/confirm",
     },
-  }
+  },
 });
