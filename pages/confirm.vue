@@ -1,5 +1,4 @@
 <script setup lang="ts">
-console.log('confirm.vue')
 const user = useSupabaseUser()
 
 watch(user, () => {

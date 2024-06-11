@@ -2,23 +2,38 @@
 const supabase = useSupabaseClient();
 
 const loading = ref(false);
+const submitted = ref(false);
 const email = defineModel<string>();
 const loginError = ref("");
+
+useHead({
+  title: "LSF Hamburg West - Anmelden",
+  meta: [
+    {
+      name: "description",
+      content: "You have been logged out",
+    },
+  ],
+});
 
 const handleLogin = async () => {
   if (!email?.value) {
     loginError.value = "Bitte gib deine E-Mail Adresse ein.";
     return;
   }
+
+  const emailRedirectTo = `${useRuntimeConfig().public.baseUrl}/confirm`;
+
   try {
     loading.value = true;
     const { error } = await supabase.auth.signInWithOtp({
       email: email?.value,
-      options: { emailRedirectTo: `${useRuntimeConfig().public.baseUrl}/confirm` },
-
+      options: { emailRedirectTo },
     });
     if (error) {
       loginError.value = error.message;
+    } else {
+      submitted.value = true;
     }
   } catch (error: any) {
     loginError.value = error?.message;
@@ -32,6 +47,7 @@ const handleLogin = async () => {
   <div
     class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8"
   >
+    <Alert v-if="submitted" headline="E-Mail versendet" message="Du solltest in wenigen Sekunden eine E-Mail mit dem Login-Link bekommen." />
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
       <img
         class="mx-auto h-10 w-auto"
@@ -71,11 +87,12 @@ const handleLogin = async () => {
 
         <div>
           <button
-            :disabled="loading"
+            :disabled="loading || submitted"
             :value="loading ? 'Loading' : 'Send magic link'"
             type="submit"
             class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
+            :class="{ 'bg-indigo-500 cursor-not-allowed': loading || submitted }"
+            >
             Anmelden
           </button>
         </div>

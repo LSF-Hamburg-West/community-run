@@ -8,9 +8,9 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      baseUrl:
-        `https://${process.env.NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL}` ||
-        "http://localhost:3000",
+      baseUrl: process.env.NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL}`
+        : "http://localhost:3000",
     },
   },
   supabase: {

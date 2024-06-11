@@ -1,7 +1,13 @@
+<script setup lang="ts">
+import { provideUseId } from '@headlessui/vue'
+
+const layout = useLayout();
+
+provideUseId(() => useId())
+</script>
+
 <template>
-  <AppContainer>
-    <PageContainer>
-      <NuxtPage />
-    </PageContainer>
-  </AppContainer>
+  <NuxtLayout :name="layout">
+    <NuxtPage />
+  </NuxtLayout>
 </template>
