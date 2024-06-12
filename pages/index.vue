@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { UpcomingOccurrences } from '#build/components';
+
 const user = useSupabaseUser()
 
 watchEffect(() => {
@@ -9,5 +11,5 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div></div>
+  <UpcomingOccurrences />
 </template>

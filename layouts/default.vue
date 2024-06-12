@@ -39,7 +39,7 @@ const currentRoute = ref(route.path)
 watch(() => route.path, () => currentRoute.value = route.path);
 
 const navigation = [
-  { name: "Events", href: "/", current: route.path == "/" },
+  { name: "Community Runs", href: "/", current: route.path == "/" },
   { name: "Profil", href: "/profile", current: false },
 ];
 
