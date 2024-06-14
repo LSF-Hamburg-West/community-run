@@ -25,7 +25,7 @@ useHead({
 const user = useSupabaseUser();
 const route = useRoute();
 const currentRoute = ref(route.path);
-const showLoginModal = ref(false);
+const showLoginModal = useState('showLoginModal', () => false);
 
 async function signOut() {
   try {
@@ -38,13 +38,18 @@ async function signOut() {
   }
 }
 
-watch(() => route.path, () => currentRoute.value = route.path);
+watch(
+  () => route.path,
+  () => (currentRoute.value = route.path)
+);
 
 const navigation = [
   { name: "Community Runs", href: "/", current: route.path == "/" },
-  { name: "Profil", href: "/profile", current: false },
 ];
 
+if (user.value) {
+  navigation.push({ name: "Profile", href: "/profile", current: route.path == "/profile" });
+}
 const userNavigation = [
   {
     name: "Your Profile",
@@ -163,9 +168,11 @@ const userNavigation = [
             </Menu>
             <button
               v-else
-              @click.prevent="() => showLoginModal = true"
+              @click.prevent="() => (showLoginModal = true)"
               class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >Einloggen</button>
+            >
+              Einloggen
+            </button>
           </div>
           <div class="-mr-2 flex items-center sm:hidden">
             <!-- Mobile menu button -->
@@ -203,11 +210,8 @@ const userNavigation = [
             >{{ item.name }}</DisclosureButton
           >
         </div>
-        <div class="border-t border-gray-200 pb-3 pt-4">
+        <div v-if="user" class="border-t border-gray-200 pb-3 pt-4">
           <div class="flex items-center px-4">
-            <div class="flex-shrink-0">
-              <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
-            </div>
             <div class="ml-3">
               <div class="text-base font-medium text-gray-800">
                 {{ user.name }}
@@ -236,6 +240,14 @@ const userNavigation = [
             >
           </div>
         </div>
+        <div v-else class="border-t border-gray-200 pt-4">
+          <button
+            @click.prevent="() => (showLoginModal = true)"
+            class="block w-full px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+          >
+            Einloggen
+          </button>
+        </div>/
       </DisclosurePanel>
     </Disclosure>
 
@@ -244,7 +256,10 @@ const userNavigation = [
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <slot />
         </div>
-        <LoginModal v-model:open="showLoginModal" :on-close="() => showLoginModal = false"/>
+        <LoginModal
+          v-model:open="showLoginModal"
+          :on-close="() => (showLoginModal = false)"
+        />
       </main>
     </div>
   </div>

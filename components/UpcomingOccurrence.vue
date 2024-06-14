@@ -16,8 +16,12 @@ const hasSignedUp = ref<boolean>(
   props.occurrence.participations.some((p) => p.user_id === user.value?.id)
 );
 
+const showLoginModal = useState('showLoginModal', () => false);
+
+
 const signUp = async () => {
   if (!user.value) {
+    showLoginModal.value = true;
     return;
   }
 
