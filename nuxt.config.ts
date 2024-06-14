@@ -13,7 +13,11 @@ export default defineNuxtConfig({
         : "http://localhost:3000",
     },
   },
+  imports: {
+    dirs: ['types/*.d.ts'],
+  },
   supabase: {
+    redirect: false,
     redirectOptions: {
       login: "/login",
       callback: "/confirm",

@@ -13,6 +13,7 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 const supabase = useSupabaseClient();
 
 useHead({
+  title: "LFS Hamburg West",
   bodyAttrs: {
     class: "h-full",
   },
@@ -20,6 +21,11 @@ useHead({
     class: "h-full",
   },
 });
+
+const user = useSupabaseUser();
+const route = useRoute();
+const currentRoute = ref(route.path);
+const showLoginModal = ref(false);
 
 async function signOut() {
   try {
@@ -31,10 +37,6 @@ async function signOut() {
     alert(error.message);
   }
 }
-
-const user = useSupabaseUser();
-const route = useRoute();
-const currentRoute = ref(route.path)
 
 watch(() => route.path, () => currentRoute.value = route.path);
 
@@ -87,7 +89,7 @@ const userNavigation = [
                     : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
                   'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium',
                 ]"
-                :aria-current="item.current === currentRoute ? 'page' : undefined"
+                :aria-current="item.href === currentRoute ? 'page' : undefined"
                 >{{ item.name }}</a
               >
             </div>
@@ -103,7 +105,7 @@ const userNavigation = [
             </button>
 
             <!-- Profile dropdown -->
-            <Menu as="div" class="relative ml-3">
+            <Menu v-if="user" as="div" class="relative ml-3">
               <div>
                 <MenuButton
                   class="relative flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -159,6 +161,11 @@ const userNavigation = [
                 </MenuItems>
               </transition>
             </Menu>
+            <button
+              v-else
+              @click.prevent="() => showLoginModal = true"
+              class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >Einloggen</button>
           </div>
           <div class="-mr-2 flex items-center sm:hidden">
             <!-- Mobile menu button -->
@@ -187,12 +194,12 @@ const userNavigation = [
             :href="item.href"
             @click.prevent="navigateTo(item.href)"
             :class="[
-              item.current
+              item.href === currentRoute
                 ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                 : 'border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800',
               'block border-l-4 py-2 pl-3 pr-4 text-base font-medium',
             ]"
-            :aria-current="item.current ? 'page' : undefined"
+            :aria-current="item.href === currentRoute ? 'page' : undefined"
             >{{ item.name }}</DisclosureButton
           >
         </div>
@@ -237,6 +244,7 @@ const userNavigation = [
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <slot />
         </div>
+        <LoginModal v-model:open="showLoginModal" :on-close="() => showLoginModal = false"/>
       </main>
     </div>
   </div>
