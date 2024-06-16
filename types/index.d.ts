@@ -7,7 +7,7 @@ declare global {
     participations: Participation[];
   };
 
-  type Event = {
+  type LSFEvent = {
     id: number;
     name: string;
     location_name: string;

@@ -47,9 +47,6 @@ const navigation = [
   { name: "Community Runs", href: "/", current: route.path == "/" },
 ];
 
-if (user.value) {
-  navigation.push({ name: "Profile", href: "/profile", current: route.path == "/profile" });
-}
 const userNavigation = [
   {
     name: "Your Profile",
@@ -253,7 +250,7 @@ const userNavigation = [
 
     <div class="py-10">
       <main>
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <slot />
         </div>
         <LoginModal

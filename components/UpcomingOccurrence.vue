@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   CalendarIcon,
+  EyeIcon,
   MapPinIcon,
   UserGroupIcon,
 } from "@heroicons/vue/20/solid";
@@ -16,8 +17,7 @@ const hasSignedUp = ref<boolean>(
   props.occurrence.participations.some((p) => p.user_id === user.value?.id)
 );
 
-const showLoginModal = useState('showLoginModal', () => false);
-
+const showLoginModal = useState("showLoginModal", () => false);
 
 const signUp = async () => {
   if (!user.value) {
@@ -62,9 +62,9 @@ const signOut = async () => {
 
 <template>
   <div v-if="occurrence.events" class="flex-auto">
-    <h3 class="pr-10 font-semibold text-gray-900 xl:pr-0">
+    <div class="pr-10 font-semibold text-gray-900 xl:pr-0">
       {{ occurrence.events.name }}
-    </h3>
+    </div>
     <dl class="mt-2 flex flex-col text-gray-500 xl:flex-row">
       <div class="flex items-start space-x-3">
         <dt class="mt-0.5">
@@ -73,7 +73,7 @@ const signOut = async () => {
         </dt>
         <dd>
           <time :datetime="occurrence.starts_on"
-            >{{ occurrence.starts_on }} at {{ occurrence.start_time }}</time
+            >{{ occurrence.starts_on }} um {{ occurrence.start_time }}</time
           >
         </dd>
       </div>
@@ -105,10 +105,30 @@ const signOut = async () => {
       </div>
     </dl>
   </div>
-  <div v-if="hasSignedUp" class="my-auto">
-    <SecondaryButton @click="signOut">Abmelden</SecondaryButton>
-  </div>
-  <div v-else class="my-auto">
-    <PrimaryButton v-if="!hasSignedUp" @click="signUp">Anmelden</PrimaryButton>
+  <div class="flex flex-col justify-around sm:flex-row sm:space-x-2">
+    <div class="sm:order-last sm:ml-2">
+      <NuxtLink
+        :to="`/events/${occurrence.id}`"
+        class="text-sm font-normal text-blue-600"
+      >
+        <span class="sr-only">Details</span>
+        <SecondaryButton>
+          <div class="flex items-center space-x-1">
+            <EyeIcon class="h-4 w-4" aria-hidden="true" />
+            <span>Details</span>
+          </div>
+        </SecondaryButton>
+      </NuxtLink>
+    </div>
+    <div>
+      <div v-if="hasSignedUp" class="my-auto">
+        <SecondaryButton @click="signOut">Abmelden</SecondaryButton>
+      </div>
+      <div v-else class="my-auto">
+        <PrimaryButton v-if="!hasSignedUp" @click="signUp"
+          >Anmelden</PrimaryButton
+        >
+      </div>
+    </div>
   </div>
 </template>
