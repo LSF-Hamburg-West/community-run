@@ -68,11 +68,19 @@ const formattedTargetTime = computed(() => {
 
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 });
+
+const isParticipant = computed(() =>
+  props.participation.user_id === user?.id
+);
+
+const canEdit = computed(() => {
+  return isParticipant.value && !edit.value;
+});
 </script>
 
 <template>
-  <div v-if="participation.user_id === user?.id">
-    <div v-if="edit" class="flex items-center">
+  <div>
+    <div v-if="canEdit" class="flex items-center">
       <input
         v-model="target_time_hours"
         type="number"
@@ -100,7 +108,7 @@ const formattedTargetTime = computed(() => {
     </div>
     <div v-else class="flex space-x-2">
       <span>{{ formattedTargetTime }}</span>
-      <button @click="edit = true">Bearbeiten</button>
+      <button v-if="isParticipant" @click="edit = true">Bearbeiten</button>
     </div>
   </div>
 </template>
