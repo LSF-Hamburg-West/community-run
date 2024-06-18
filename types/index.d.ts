@@ -19,7 +19,7 @@ declare global {
     id: number;
     user_id: string;
     occurrence_id: number;
-    target_time: string;
+    target_time: number;
     profiles?: Profile;
   };
 

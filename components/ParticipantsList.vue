@@ -35,7 +35,7 @@ defineProps<{
               {{ participation?.profiles?.username || "Anonym" }}
             </td>
             <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-              {{ participation.target_time }}
+              <TargetTimeInput :participation="participation" />
             </td>
           </tr>
         </tbody>

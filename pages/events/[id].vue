@@ -34,6 +34,7 @@ const { data: occurrence, refresh: refreshOccurrence } = await useAsyncData(
         participations (
           id,
           user_id,
+          target_time,
           profiles (
             username
           )
@@ -42,7 +43,6 @@ const { data: occurrence, refresh: refreshOccurrence } = await useAsyncData(
       .eq("id", route.params.id)
       .single();
 
-    console.log(data);
     return data;
   }
 );
@@ -67,7 +67,6 @@ onMounted(() => {
       filter: `occurrence_id=eq.${route.params.id}`,
     },
     (payload) => {
-      console.log("refreshing", payload);
       refreshOccurrence();
     }
   );

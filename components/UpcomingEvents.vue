@@ -43,10 +43,6 @@ onMounted(() => {
       "postgres_changes",
       { event: "*", schema: "public", table: "participations" },
       () => {
-        console.log(
-          "refreshing",
-          occurrences.value?.map((o) => o.participations.length)
-        );
         refreshOccurrences();
       }
     );
