@@ -3,7 +3,7 @@ declare global {
     id: number;
     starts_on: string;
     start_time: string;
-    events: Event;
+    events: LSFEvent;
     participations: Participation[];
   };
 
@@ -19,6 +19,13 @@ declare global {
     id: number;
     user_id: string;
     occurrence_id: number;
+    target_time: string;
+    profiles?: Profile;
+  };
+
+  type Profile = {
+    id: number;
+    username: string;
   };
 }
 

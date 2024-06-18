@@ -4,16 +4,24 @@ import {
   MapPinIcon,
   UserGroupIcon,
 } from "@heroicons/vue/20/solid";
-import { ref } from "vue";
-const supabase = useSupabaseClient();
+import type { RealtimeChannel } from "@supabase/supabase-js";
+import type { Database } from "~/types/database.types";
+
+const client = useSupabaseClient<Database>();
+
+let realtimeChannel: RealtimeChannel;
+
 const user = useSupabaseUser();
 
 const route = useRoute();
 
-const { data, error } = await supabase
-  .from("occurrences")
-  .select(
-    `
+const { data: occurrence, refresh: refreshOccurrence } = await useAsyncData(
+  `occurrence_details_${route.params.id}`,
+  async () => {
+    const { data } = await client
+      .from("occurrences")
+      .select(
+        `
         id,
         starts_on,
         start_time,
@@ -30,23 +38,53 @@ const { data, error } = await supabase
             username
           )
         )`
-  )
-  .eq("id", route.params.id)
-  .single();
+      )
+      .eq("id", route.params.id)
+      .single();
 
-const hasSignedUp = ref<boolean>(
-  data.participations.some((p) => p.user_id === user.value?.id)
+    console.log(data);
+    return data;
+  }
 );
 
-const signOut = () => {};
-const signUp = () => {};
+if (!occurrence) {
+  navigateTo("/404");
+}
+
+const isParticipating = computed(() =>
+  occurrence.value
+    ? occurrence.value.participations.some((p) => p.user_id === user.value?.id)
+    : false
+);
+
+onMounted(() => {
+  realtimeChannel = client.channel("public:participations").on(
+    "postgres_changes",
+    {
+      event: "*",
+      schema: "public",
+      table: "participations",
+      filter: `occurrence_id=eq.${route.params.id}`,
+    },
+    (payload) => {
+      console.log("refreshing", payload);
+      refreshOccurrence();
+    }
+  );
+
+  realtimeChannel.subscribe();
+});
+
+onUnmounted(() => {
+  client.removeChannel(realtimeChannel);
+});
 </script>
 
 <template>
   <div class="flex justify-between">
     <div>
       <h1 class="text-2xl font-semibold leading-7 text-gray-900">
-        {{ data.events.name }}
+        {{ occurrence.events.name }}
       </h1>
 
       <dl class="mt-2 flex flex-col text-gray-500 xl:flex-row">
@@ -56,8 +94,8 @@ const signUp = () => {};
             <CalendarIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
           </dt>
           <dd>
-            <time :datetime="data.starts_on"
-              >{{ data.starts_on }} um {{ data.start_time }}</time
+            <time :datetime="occurrence.starts_on"
+              >{{ occurrence.starts_on }} um {{ occurrence.start_time }}</time
             >
           </dd>
         </div>
@@ -69,7 +107,7 @@ const signUp = () => {};
             <MapPinIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
           </dt>
           <dd>
-            {{ data.events.location_name }}
+            {{ occurrence.events.location_name }}
           </dd>
         </div>
         <div
@@ -79,22 +117,29 @@ const signUp = () => {};
             <span class="sr-only">Location</span>
             <UserGroupIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
           </dt>
-          <dd>{{ data.participations.length }} Teilnehmer*innen</dd>
+          <dd>{{ occurrence.participations.length }} Teilnehmer*innen</dd>
         </div>
       </dl>
     </div>
     <div>
-      <div v-if="hasSignedUp" class="my-auto">
-        <SecondaryButton @click="signOut">Abmelden</SecondaryButton>
+      <div v-if="isParticipating" class="my-auto">
+        <SecondaryButton @click="() => useEventSignOut(occurrence.id)"
+          >Abmelden</SecondaryButton
+        >
       </div>
       <div v-else class="my-auto">
-        <PrimaryButton v-if="!hasSignedUp" @click="signUp"
+        <PrimaryButton
+          v-if="!isParticipating"
+          @click="() => useEventSignUp(occurrence.id)"
           >Anmelden</PrimaryButton
         >
       </div>
     </div>
   </div>
-  <div>
-    <EventMap :event="data.events" />
+  <div class="flex space-x-4 mt-8">
+    <div class="min-w-[60%]">
+      <ParticipantsList :participations="occurrence.participations" />
+    </div>
+    <EventMap :event="occurrence.events" />
   </div>
 </template>

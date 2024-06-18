@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { UpcomingOccurrences } from '#build/components';
+import type { UpcomingEvents } from '#build/components';
 </script>
 
 <template>
-  <UpcomingOccurrences />
+  <UpcomingEvents />
 </template>

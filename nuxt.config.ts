@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     },
   },
   imports: {
-    dirs: ['types/*.d.ts'],
+    dirs: ["types/*.d.ts"],
   },
   supabase: {
     redirect: false,

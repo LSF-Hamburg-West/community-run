@@ -9,8 +9,9 @@ import {
   MenuItems,
 } from "@headlessui/vue";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import type { Database } from "~/types/database.types";
 
-const supabase = useSupabaseClient();
+const supabase = useSupabaseClient<Database>();
 
 useHead({
   title: "LFS Hamburg West",
@@ -30,11 +31,13 @@ const showLoginModal = useState('showLoginModal', () => false);
 async function signOut() {
   try {
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    user.value = null;
+    if (error) {
+      throw error;
+    }
+
     reloadNuxtApp();
-  } catch (error) {
-    alert(error.message);
+  } catch (error: any) {
+    console.error("Error logging out:", error.message);
   }
 }
 
@@ -211,7 +214,7 @@ const userNavigation = [
           <div class="flex items-center px-4">
             <div class="ml-3">
               <div class="text-base font-medium text-gray-800">
-                {{ user.name }}
+                {{ "NAME" }}
               </div>
               <div class="text-sm font-medium text-gray-500">
                 {{ user.email }}

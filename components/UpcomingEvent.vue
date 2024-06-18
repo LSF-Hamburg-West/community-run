@@ -5,59 +5,20 @@ import {
   MapPinIcon,
   UserGroupIcon,
 } from "@heroicons/vue/20/solid";
-const supabase = useSupabaseClient();
+
 const user = useSupabaseUser();
 
 const props = defineProps<{
   occurrence: Occurrence;
 }>();
 
-const participationsCount = ref<number>(props.occurrence.participations.length);
-const hasSignedUp = ref<boolean>(
+const isParticipating = computed(() =>
   props.occurrence.participations.some((p) => p.user_id === user.value?.id)
 );
 
-const showLoginModal = useState("showLoginModal", () => false);
-
-const signUp = async () => {
-  if (!user.value) {
-    showLoginModal.value = true;
-    return;
-  }
-
-  const { error } = await supabase.from("participations").insert([
-    {
-      user_id: user.value.id,
-      occurrence_id: props.occurrence.id,
-    },
-  ]);
-
-  if (error) {
-    console.error("Error signing up:", error);
-  } else {
-    hasSignedUp.value = true;
-    participationsCount.value = participationsCount.value + 1;
-  }
-};
-
-const signOut = async () => {
-  if (!user.value) {
-    return;
-  }
-
-  const { error } = await supabase
-    .from("participations")
-    .delete()
-    .eq("user_id", user.value.id)
-    .eq("occurrence_id", props.occurrence.id);
-
-  if (error) {
-    console.error("Error signing out:", error);
-  } else {
-    hasSignedUp.value = false;
-    participationsCount.value = participationsCount.value - 1;
-  }
-};
+const participantsCount = computed(
+  () => props.occurrence.participations.length
+);
 </script>
 
 <template>
@@ -99,9 +60,7 @@ const signOut = async () => {
           <span class="sr-only">Location</span>
           <UserGroupIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
         </dt>
-        <dd>
-          {{ participationsCount }}
-        </dd>
+        <dd>{{ participantsCount }}</dd>
       </div>
     </dl>
   </div>
@@ -121,11 +80,15 @@ const signOut = async () => {
       </NuxtLink>
     </div>
     <div>
-      <div v-if="hasSignedUp" class="my-auto">
-        <SecondaryButton @click="signOut">Abmelden</SecondaryButton>
+      <div v-if="isParticipating" class="my-auto">
+        <SecondaryButton @click="() => useEventSignOut(occurrence.id)"
+          >Abmelden</SecondaryButton
+        >
       </div>
       <div v-else class="my-auto">
-        <PrimaryButton v-if="!hasSignedUp" @click="signUp"
+        <PrimaryButton
+          v-if="!isParticipating"
+          @click="() => useEventSignUp(occurrence.id)"
           >Anmelden</PrimaryButton
         >
       </div>
