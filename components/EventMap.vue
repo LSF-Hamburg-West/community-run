@@ -4,7 +4,7 @@ defineProps<{ event: LSFEvent }>();
 
 <template>
   <LMap
-    style="height: 300px; width: 50%; z-index: 10;"
+    style="height: 300px; width: 100%; z-index: 10;"
     :zoom="16"
     :center="[event.latitude, event.longitude]"
     :use-global-leaflet="false"

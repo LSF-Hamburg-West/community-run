@@ -135,10 +135,12 @@ onUnmounted(() => {
       </div>
     </div>
   </div>
-  <div class="flex space-x-4 mt-8">
-    <div class="min-w-[60%]">
+  <div class="flex flex-col sm:flex-row sm:space-x-4 mt-8">
+    <div class="w-full sm:w-1/2 md:w-2/3">
       <ParticipantsList :participations="occurrence.participations" />
     </div>
-    <EventMap :event="occurrence.events" />
+    <div class="w-full sm:w-1/2 md:w-1/3">
+      <EventMap :event="occurrence.events" />
+    </div>
   </div>
 </template>
