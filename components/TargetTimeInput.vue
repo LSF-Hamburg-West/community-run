@@ -40,7 +40,11 @@ const updateTargetTime = async () => {
 };
 
 const convertToSeconds = computed(() => {
-  console.log(target_time_hours.value, target_time_minutes.value, target_time_seconds.value);
+  console.log(
+    target_time_hours.value,
+    target_time_minutes.value,
+    target_time_seconds.value
+  );
   return (
     target_time_hours.value * 3600 +
     target_time_minutes.value * 60 +
@@ -56,22 +60,42 @@ const save = async () => {
 const edit = ref(false);
 
 const formattedTargetTime = computed(() => {
-  const hours = convertFromSeconds.value.hours;
-  const minutes = convertFromSeconds.value.minutes;
-  const seconds = convertFromSeconds.value.seconds;
+  const { hours, minutes, seconds } = convertFromSeconds.value;
 
-  return `${hours}h ${minutes}m ${seconds}s`;
+  const formattedHours = String(hours).padStart(2, "0");
+  const formattedMinutes = String(minutes).padStart(2, "0");
+  const formattedSeconds = String(seconds).padStart(2, "0");
+
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 });
 </script>
 
 <template>
   <div v-if="participation.user_id === user?.id">
     <div v-if="edit" class="flex items-center">
-      <input v-model="target_time_hours" type="number" min=0 max=23 class="w-16" />
+      <input
+        v-model="target_time_hours"
+        type="number"
+        min="0"
+        max="23"
+        class="w-16"
+      />
       <span class="mx-2">:</span>
-      <input v-model="target_time_minutes" type="number" min=0 max=59 class="w-16" />
+      <input
+        v-model="target_time_minutes"
+        type="number"
+        min="0"
+        max="59"
+        class="w-16"
+      />
       <span class="mx-2">:</span>
-      <input v-model="target_time_seconds" type="number" min=0 max=59 class="w-16" />
+      <input
+        v-model="target_time_seconds"
+        type="number"
+        min="0"
+        max="59"
+        class="w-16"
+      />
       <button @click="save">Speichern</button>
     </div>
     <div v-else class="flex space-x-2">
