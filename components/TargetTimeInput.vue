@@ -30,7 +30,6 @@ const target_time_minutes = ref(minutes);
 const target_time_seconds = ref(seconds);
 
 const updateTargetTime = async () => {
-  console.log(convertToSeconds.value);
   await client
     .from("participations")
     .update({
@@ -40,11 +39,6 @@ const updateTargetTime = async () => {
 };
 
 const convertToSeconds = computed(() => {
-  console.log(
-    target_time_hours.value,
-    target_time_minutes.value,
-    target_time_seconds.value
-  );
   return (
     target_time_hours.value * 3600 +
     target_time_minutes.value * 60 +
@@ -70,7 +64,7 @@ const formattedTargetTime = computed(() => {
 });
 
 const isParticipant = computed(() =>
-  props.participation.user_id === user?.id
+  props.participation.user_id === user.value?.id
 );
 
 const canEdit = computed(() => {
