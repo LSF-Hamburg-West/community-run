@@ -63,12 +63,12 @@ const formattedTargetTime = computed(() => {
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 });
 
-const isParticipant = computed(() =>
-  props.participation.user_id === user.value?.id
+const isParticipant = computed(
+  () => props.participation.user_id === user.value?.id
 );
 
 const canEdit = computed(() => {
-  return isParticipant.value && !edit.value;
+  return isParticipant.value && edit.value;
 });
 </script>
 
